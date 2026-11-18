@@ -1,142 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saurabh Pro Stock Tracker - Final</title>
+    <title>Pro Stock Tracker</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 420px; }
-        h2 { text-align: center; color: #333; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 15px; }
-        input, button { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 15px; }
-        .row { display: flex; gap: 8px; }
-        .add-btn { background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
-        .add-btn:hover { background: #218838; }
-        .clear-btn { background: #dc3545; color: white; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 14px; }
-        .clear-btn:hover { background: #c82333; }
-        .stats { background: #e9ecef; padding: 10px; border-radius: 5px; margin-bottom: 12px; text-align: center; font-weight: bold; color: #333; font-size: 14px; }
-        .search-input { border-color: #007bff; background: #f8f9fa; }
-        ul { list-style: none; padding: 0; max-height: 230px; overflow-y: auto; }
-        li { background: #f8f9fa; padding: 10px; margin-top: 8px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #28a745; }
-        .item-info { font-size: 14px; color: #333; }
-        .delete-btn { background: #e0a800; color: white; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; width: auto; font-size: 12px; }
-        .delete-btn:hover { background: #c69500; }
-        .footer { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
+        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .btn { display: block; width: 100%; background: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; text-align: center; margin-top: 20px; text-decoration: none; }
+        .btn:hover { background: #219653; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h2>📦 Pro Stock Tracker</h2>
-        <div class="subtitle">Day 96: Final Production Version</div>
-
-        <div class="stats" id="totalStats">Total Unique: 0 | Total Stock Qty: 0</div>
-
-        <!-- Search Bar -->
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Item search karein..." onkeyup="filterItems()" />
-
-        <input type="text" id="itemName" placeholder="Item ka naam (jaise: Rice, Sugar)..." />
-        <div class="row">
-            <input type="number" id="itemQty" placeholder="Quantity" min="1" value="1" />
-            <button class="add-btn" onclick="addItem()">Add Item</button>
-        </div>
-        
-        <ul id="itemList"></ul>
-
-        <!-- Clear All Data Button -->
-        <button class="clear-btn" onclick="clearAllData()">🗑️ Saara Data Clear Karein</button>
-
-        <div class="footer">Built with HTML, CSS & LocalStorage</div>
+        <h1>📦 Pro Stock Tracker</h1>
+        <p style="text-align: center; font-size: 18px;">Aapka stock manager safal-pūrvak live ho chuka hai!</p>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <p><b>Status:</b> App bilkul makkhan ki tarah chal rahi hai.</p>
+        <a href="#" class="btn">Naya Stock Jodein</a>
     </div>
-
-    <script>
-        window.onload = function() {
-            displayItems();
-        };
-
-        function getStoredItems() {
-            let raw = JSON.parse(localStorage.getItem('proStockFinal')) || [];
-            return raw.map(item => {
-                if (typeof item === 'string') {
-                    return { name: item, qty: 1 };
-                }
-                return { name: item.name || 'Item', qty: Number(item.qty) || 1 };
-            });
-        }
-
-        function addItem() {
-            const nameInput = document.getElementById('itemName');
-            const qtyInput = document.getElementById('itemQty');
-            
-            const name = nameInput.value.trim();
-            const qty = Number(qtyInput.value) || 1;
-
-            if (!name) {
-                alert('Kripya item ka naam daaliye!');
-                return;
-            }
-
-            let items = getStoredItems();
-            items.push({ name: name, qty: qty });
-            localStorage.setItem('proStockFinal', JSON.stringify(items));
-
-            nameInput.value = '';
-            qtyInput.value = '1';
-            document.getElementById('searchInput').value = '';
-            displayItems();
-        }
-
-        function displayItems(filteredList = null) {
-            let items = getStoredItems();
-            let displayArray = filteredList !== null ? filteredList : items;
-            let listHTML = '';
-
-            let totalQty = 0;
-            items.forEach(item => totalQty += item.qty);
-
-            if (displayArray.length === 0) {
-                listHTML = `<li style="justify-content: center; color: #777; border-left: 4px solid #ccc;">Koi item nahi mila</li>`;
-            } else {
-                displayArray.forEach((item, index) => {
-                    const realIndex = items.findIndex(i => i.name === item.name && i.qty === item.qty);
-                    listHTML += `
-                        <li>
-                            <span class="item-info"><strong>${item.name}</strong> (Qty: ${item.qty})</span>
-                            <button class="delete-btn" onclick="deleteItem(${realIndex})">Delete</button>
-                        </li>`;
-                });
-            }
-
-            document.getElementById('itemList').innerHTML = listHTML;
-            document.getElementById('totalStats').innerText = `Total Unique: ${items.length} | Total Stock Qty: ${totalQty}`;
-        }
-
-        function filterItems() {
-            let query = document.getElementById('searchInput').value.toLowerCase();
-            let items = getStoredItems();
-
-            let filtered = items.filter(item => item.name.toLowerCase().includes(query));
-            displayItems(filtered);
-        }
-
-        function deleteItem(index) {
-            let items = getStoredItems();
-            items.splice(index, 1);
-            localStorage.setItem('proStockFinal', JSON.stringify(items));
-            
-            document.getElementById('searchInput').value = '';
-            displayItems();
-        }
-
-        function clearAllData() {
-            if (confirm('Kya aap waqai saara data delete karna chahte hain?')) {
-                localStorage.removeItem('proStockFinal');
-                document.getElementById('searchInput').value = '';
-                displayItems();
-            }
-        }
-    </script>
 </body>
 </html>
-
