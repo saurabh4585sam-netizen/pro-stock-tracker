@@ -1,24 +1,132 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Stock Tracker</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; }
-        .btn { display: block; width: 100%; background: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; text-align: center; margin-top: 20px; text-decoration: none; }
-        .btn:hover { background: #219653; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pro Stock Tracker - Day 1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 16px;
+      color: #222;
+    }
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    input {
+      flex: 1;
+      min-width: 120px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 8px;
+      background: #1f8a4c;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .del-btn {
+      background: #c0392b;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📦 Pro Stock Tracker</h1>
-        <p style="text-align: center; font-size: 18px;">Aapka stock manager safal-pūrvak live ho chuka hai!</p>
-        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-        <p><b>Status:</b> App bilkul makkhan ki tarah chal rahi hai.</p>
-        <a href="#" class="btn">Naya Stock Jodein</a>
+  <div class="app">
+    <h2>📦 Pro Stock Tracker</h2>
+
+    <div class="row">
+      <input id="itemName" type="text" placeholder="Item ka naam (e.g. Sugar)" />
+      <input id="itemQty" type="number" placeholder="Qty" min="1" />
+      <button id="addBtn">Add</button>
     </div>
+
+    <div id="stockList"></div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "pro_stock_items_v1";
+    const nameInput = document.getElementById("itemName");
+    const qtyInput = document.getElementById("itemQty");
+    const addBtn = document.getElementById("addBtn");
+    const stockList = document.getElementById("stockList");
+
+    let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+    function saveAndRender() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      renderList();
+    }
+
+    function renderList() {
+      stockList.innerHTML = "";
+      if (items.length === 0) {
+        stockList.innerHTML = "<p>Abhi koi stock item nahi hai.</p>";
+        return;
+      }
+
+      items.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <span><b>${item.name}</b> — Qty: ${item.qty}</span>
+          <button class="del-btn" onclick="deleteItem(${index})">Delete</button>
+        `;
+        stockList.appendChild(div);
+      });
+    }
+
+    function deleteItem(index) {
+      items.splice(index, 1);
+      saveAndRender();
+    }
+
+    addBtn.addEventListener("click", () => {
+      const name = nameInput.value.trim();
+      const qty = Number(qtyInput.value);
+
+      if (!name || qty <= 0) {
+        alert("Sahi item naam aur quantity daalein.");
+        return;
+      }
+
+      items.push({ name, qty });
+      nameInput.value = "";
+      qtyInput.value = "";
+      saveAndRender();
+    });
+
+    renderList();
+  </script>
 </body>
 </html>
